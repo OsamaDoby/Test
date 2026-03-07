@@ -1,92 +1,143 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Copy, RefreshCw, Trash2, Moon, Sun, Globe } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" x-data="mailApp()" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoBy DoBy | بريد مؤقت ذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.5s; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
 
-const DoByDoBy = () => {
-  const [email, setEmail] = useState('جاري التوليد...');
-  const [messages, setMessages] = useState([]);
-  const [isDark, setIsDark] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const [lang, setLang] = useState('ar');
-  const [timeLeft, setTimeLeft] = useState(600); // 10 دقائق
-
-  // نصوص الموقع للغتين
-  const t = {
-    ar: { title: "دوبي دوبي", sub: "بريد مؤقت ذكي وسريع", copy: "نسخ", refresh: "تحديث", inbox: "الرسائل الواردة", empty: "في انتظار وصول رسائل..." },
-    en: { title: "DoBy DoBy", sub: "Smart & Fast Temp Mail", copy: "Copy", refresh: "Refresh", inbox: "Inbox", empty: "Waiting for incoming emails..." }
-  };
-
-  // توليد إيميل عشوائي (مثال مبسط باستخدام API خارجي)
-  const generateEmail = async () => {
-    const randomName = Math.random().toString(36).substring(7);
-    setEmail(`${randomName}@doby-doby.com`);
-    setMessages([]);
-    setTimeLeft(600);
-  };
-
-  useEffect(() => {
-    generateEmail();
-    const timer = setInterval(() => setTimeLeft(prev => (prev > 0 ? prev - 1 : 0)), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className={`${isDark ? 'dark' : ''} min-h-screen transition-colors duration-500`}>
-      <div className="bg-slate-50 dark:bg-slate-900 min-h-screen font-sans text-slate-900 dark:text-white p-4 md:p-8">
-        
-        {/* Header */}
-        <header className="max-w-4xl mx-auto flex justify-between items-center mb-12">
-          <motion.h1 initial={{y: -20}} animate={{y: 0}} className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-            DoBy DoBy
-          </motion.h1>
-          <div className="flex gap-4">
-            <button onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} className="p-2 rounded-full bg-white dark:bg-slate-800 shadow-lg"><Globe size={20} /></button>
-            <button onClick={() => setIsDark(!isDark)} className="p-2 rounded-full bg-white dark:bg-slate-800 shadow-lg">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button>
-          </div>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <header class="flex justify-between items-center mb-12">
+            <h1 class="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent">DoBy DoBy</h1>
+            <div class="flex gap-2">
+                <button @click="toggleLang()" class="p-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm" x-text="lang === 'ar' ? 'EN' : 'AR'"></button>
+                <button @click="darkMode = !darkMode" class="p-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm">
+                    <span x-show="!darkMode">🌙</span><span x-show="darkMode">☀️</span>
+                </button>
+            </div>
         </header>
 
-        {/* Main Card */}
-        <main className="max-w-2xl mx-auto text-center">
-          <motion.div initial={{opacity: 0, scale: 0.9}} animate={{opacity: 1, scale: 1}} className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-2xl border border-blue-100 dark:border-slate-700">
-            <p className="text-sm opacity-60 mb-2">{t[lang].sub}</p>
-            <div className="flex flex-col md:flex-row items-center gap-4 bg-slate-100 dark:bg-slate-700 p-4 rounded-2xl mb-6">
-              <span className="text-xl font-mono flex-1 break-all">{email}</span>
-              <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-all active:scale-95">
-                <Copy size={18} /> {t[lang].copy}
-              </button>
+        <main class="max-w-xl mx-auto text-center">
+            <div class="glass border border-white/20 dark:border-slate-700 p-8 rounded-[2.5rem] shadow-2xl transition-all hover:scale-[1.01]">
+                <p class="text-sm opacity-60 mb-3" x-text="t[lang].sub"></p>
+                
+                <div class="relative group mb-6">
+                    <input type="text" readonly :value="email" class="w-full bg-slate-100 dark:bg-slate-800/50 p-5 rounded-2xl text-center text-xl font-mono border-2 border-transparent focus:border-blue-500 outline-none transition-all">
+                    <button @click="copyEmail()" class="absolute inset-y-2 left-2 bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-xl transition-all active:scale-90 flex items-center gap-2">
+                        <span x-text="t[lang].copy"></span>
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center px-2">
+                    <div class="flex items-center gap-2 text-sm font-bold text-red-500">
+                        <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
+                        <span x-text="formatTime(timer)"></span>
+                    </div>
+                    <button @click="init()" class="text-slate-500 hover:text-blue-500 flex items-center gap-1 transition-colors">
+                        <span x-text="t[lang].refresh"></span> 🔄
+                    </button>
+                </div>
             </div>
 
-            {/* Timer Counter */}
-            <div className="text-sm mb-4">
-              <span className="text-red-500 font-bold">{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
-            </div>
+            <section class="mt-12 text-right" :dir="lang === 'ar' ? 'rtl' : 'ltr'">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">📬 <span x-text="t[lang].inbox"></span></h2>
+                
+                <template x-if="messages.length === 0">
+                    <div class="p-16 border-4 border-dashed border-slate-200 dark:border-slate-800 rounded-[2rem] opacity-40">
+                        <p x-text="t[lang].empty"></p>
+                    </div>
+                </template>
 
-            <div className="flex justify-center gap-4">
-              <button onClick={generateEmail} className="flex items-center gap-2 text-slate-500 hover:text-blue-500 transition-colors">
-                <RefreshCw size={18} /> {t[lang].refresh}
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Inbox Section */}
-          <section className="mt-12 text-right" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Mail size={22} className="text-blue-500" /> {t[lang].inbox}
-            </h3>
-            <div className="space-y-4">
-              {messages.length === 0 ? (
-                <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="p-12 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl opacity-50">
-                   {t[lang].empty}
-                </motion.div>
-              ) : (
-                /* هنا يتم عرض الرسائل الحقيقية عند ربط الـ API */
-                null
-              )}
-            </div>
-          </section>
+                <div class="space-y-4">
+                    <template x-for="msg in messages" :key="msg.id">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border-l-4 border-blue-500 hover:shadow-md transition-all cursor-pointer">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-bold text-blue-600" x-text="msg.from.address"></span>
+                                <span class="text-xs opacity-50" x-text="new Date(msg.createdAt).toLocaleTimeString()"></span>
+                            </div>
+                            <p class="font-medium" x-text="msg.subject"></p>
+                        </div>
+                    </template>
+                </div>
+            </section>
         </main>
-      </div>
     </div>
-  );
-};
 
-export default DoByDoBy;
+    <script>
+        function mailApp() {
+            return {
+                email: 'جاري التوليد...',
+                token: '',
+                messages: [],
+                timer: 600,
+                darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+                lang: 'ar',
+                t: {
+                    ar: { sub: "بريدك الإلكتروني المؤقت جاهز", copy: "نسخ", refresh: "تحديث", inbox: "صندوق الوارد", empty: "لا توجد رسائل بعد.. نحن نراقب الوضع!" },
+                    en: { sub: "Your temporary email is ready", copy: "Copy", refresh: "Refresh", inbox: "Inbox", empty: "No messages yet.. we are watching!" }
+                },
+                async init() {
+                    this.startTimer();
+                    try {
+                        // 1. Get Domain
+                        const domains = await fetch('https://api.mail.tm/domains').then(res => res.json());
+                        const domain = domains['hydra:member'][0].domain;
+                        const address = `${Math.random().toString(36).substring(7)}@${domain}`;
+                        const password = 'password123';
+
+                        // 2. Create Account
+                        await fetch('https://api.mail.tm/accounts', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ address, password })
+                        });
+
+                        // 3. Get Token
+                        const auth = await fetch('https://api.mail.tm/token', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ address, password })
+                        }).then(res => res.json());
+
+                        this.email = address;
+                        this.token = auth.token;
+                        this.checkMessages();
+                        setInterval(() => this.checkMessages(), 5000); // تحديث كل 5 ثواني
+                    } catch (e) { this.email = "خطأ في الاتصال"; }
+                },
+                async checkMessages() {
+                    if (!this.token) return;
+                    const res = await fetch('https://api.mail.tm/messages', {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    }).then(res => res.json());
+                    this.messages = res['hydra:member'];
+                },
+                copyEmail() {
+                    navigator.clipboard.writeText(this.email);
+                    alert(this.lang === 'ar' ? 'تم النسخ!' : 'Copied!');
+                },
+                toggleLang() {
+                    this.lang = this.lang === 'ar' ? 'en' : 'ar';
+                    document.documentElement.dir = this.lang === 'ar' ? 'rtl' : 'ltr';
+                },
+                startTimer() {
+                    this.timer = 600;
+                    setInterval(() => { if(this.timer > 0) this.timer-- }, 1000);
+                },
+                formatTime(s) {
+                    return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
