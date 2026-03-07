@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Doby Mail | بريد مؤقت</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doby Mail | Neo Generation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -12,205 +12,209 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#f0f7ff', 100: '#e0effe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+                        neonBlue: '#00f2ff',
+                        neonPurple: '#bc13fe',
                     },
-                    borderRadius: { '3xl': '1.5rem', '4xl': '2rem' }
+                    boxShadow: {
+                        'neon': '0 0 15px rgba(0, 242, 255, 0.5)',
+                        'neon-strong': '0 0 25px rgba(188, 19, 254, 0.6)',
+                    }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Tajawal:wght@400;700&display=swap');
-        :root { --font-ar: 'Tajawal', sans-serif; --font-en: 'Plus Jakarta Sans', sans-serif; }
-        body { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-ar); }
-        .en-mode { font-family: var(--font-en); direction: ltr; }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.05); }
-        .gradient-bg { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
-        .loading-shimmer { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+        
+        body { 
+            background: #050b18; 
+            font-family: 'Tajawal', sans-serif; 
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .en-mode { font-family: 'Orbitron', sans-serif; direction: ltr; }
+        
+        /* تأثير الخلفية المتحركة */
+        .bg-animate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            opacity: 0.15; z-index: -1; animation: pulse bgMove 10s infinite alternate;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .neon-border {
+            border: 1px solid var(--tw-neonBlue);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+        }
+
+        @keyframes pulse { 0% { opacity: 0.1; } 100% { opacity: 0.25; } }
     </style>
 </head>
-<body class="bg-[#f8fafc] dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
+<body class="dark">
+    <div class="bg-animate"></div>
 
-    <nav class="sticky top-0 z-40 w-full p-4 lg:px-8 flex justify-between items-center backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div class="flex items-center gap-2 group cursor-pointer">
-            <div class="gradient-bg p-2.5 rounded-2xl text-white shadow-lg shadow-blue-500/20 group-hover:rotate-12 transition-transform">
-                <i class="fas fa-paper-plane"></i>
+    <nav class="p-6 flex justify-between items-center max-w-5xl mx-auto">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 glass flex items-center justify-center border border-neonBlue shadow-neon">
+                <i class="fas fa-robot text-neonBlue text-xl"></i>
             </div>
-            <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent gradient-bg">Doby Mail</span>
+            <span class="text-2xl font-bold tracking-widest text-white">DOBY<span class="text-neonBlue">MAIL</span></span>
         </div>
-        
-        <div class="flex items-center gap-2">
-            <button onclick="toggleLang()" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-all active:scale-90">
-                <span id="langLabel" class="text-xs font-bold uppercase">EN</span>
-            </button>
-            <button id="themeToggle" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 transition-all active:scale-90">
-                <i class="fas fa-moon dark:text-yellow-400 text-slate-600"></i>
-            </button>
+        <div class="flex gap-2">
+            <button onclick="toggleLang()" class="glass px-4 py-2 text-xs font-bold hover:border-neonBlue transition" id="langBtn">EN</button>
+            <button onclick="toggleTheme()" class="glass p-2 w-10 h-10 flex items-center justify-center"><i class="fas fa-sun text-yellow-400"></i></button>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-5 pt-8 pb-20">
-        <div class="text-center mb-10">
-            <h2 id="heroTitle" class="text-3xl md:text-4xl font-extrabold mb-3">بريدك المؤقت أصبح أذكى</h2>
-            <p id="heroSub" class="text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">تخلص من الرسائل المزعجة واحصل على خصوصية تامة مع Doby Mail.</p>
-        </div>
+    <main class="max-w-4xl mx-auto px-6 mt-10">
+        <div class="glass p-8 relative overflow-hidden mb-10">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-neonBlue opacity-20 blur-3xl"></div>
+            
+            <div class="text-center mb-8">
+                <h1 id="mainTitle" class="text-3xl font-bold mb-2">منصة البريد الذكي</h1>
+                <p id="subTitle" class="text-gray-400 text-sm">أمان كامل، خصوصية فائقة، وهوية رقمية مؤقتة.</p>
+            </div>
 
-        <div class="glass-card rounded-4xl p-6 shadow-2xl shadow-blue-500/5 mb-8 border border-white">
-            <div class="space-y-4">
-                <div class="relative">
-                    <input type="text" id="emailAddr" readonly 
-                        class="w-full h-16 px-6 rounded-2xl bg-slate-100/50 dark:bg-slate-900/50 text-center font-bold text-lg border-2 border-transparent focus:border-blue-500 outline-none transition-all dark:text-white" 
-                        value="Loading...">
-                    <div id="copyBadge" class="absolute top-0 right-0 left-0 -mt-2 hidden">
-                        <span class="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded-full mx-auto table">Copied!</span>
-                    </div>
-                </div>
+            <div class="relative group mb-6">
+                <input type="text" id="emailAddr" readonly 
+                    class="w-full bg-black/40 border border-gray-700 p-5 rounded-xl text-center font-mono text-xl text-neonBlue outline-none focus:border-neonBlue transition-all shadow-inner"
+                    value="WAITING FOR SIGNAL...">
+            </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="copyEmail()" class="h-14 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg">
-                        <i class="fas fa-copy"></i> <span id="btnCopy">نسخ البريد</span>
-                    </button>
-                    <button onclick="refreshEmail()" class="h-14 bg-blue-500 text-white rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-500/20">
-                        <i class="fas fa-sync-alt"></i> <span id="btnRefresh">تغيير</span>
-                    </button>
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onclick="copyEmail()" class="glass p-4 hover:bg-neonBlue/20 transition flex flex-col items-center gap-2 group">
+                    <i class="fas fa-copy group-hover:scale-110"></i>
+                    <span class="text-[10px]" id="btnCopy">نسخ</span>
+                </button>
+                <button onclick="genEmail()" class="glass p-4 hover:bg-neonPurple/20 transition flex flex-col items-center gap-2 group border-neonPurple/30">
+                    <i class="fas fa-sync-alt group-hover:rotate-180 duration-500"></i>
+                    <span class="text-[10px]" id="btnNew">جديد</span>
+                </button>
+                <button onclick="downloadQR()" class="glass p-4 hover:bg-green-500/20 transition flex flex-col items-center gap-2">
+                    <i class="fas fa-qrcode"></i>
+                    <span class="text-[10px]" id="btnQR">QR كود</span>
+                </button>
+                <button onclick="toggleSound()" id="soundBtn" class="glass p-4 hover:bg-yellow-500/20 transition flex flex-col items-center gap-2">
+                    <i class="fas fa-bell"></i>
+                    <span class="text-[10px]" id="btnSound">تنبيه</span>
+                </button>
             </div>
         </div>
 
-        <div class="space-y-4">
-            <div class="flex items-center justify-between px-2">
-                <h3 id="inboxTitle" class="font-bold flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    صندوق الوارد
+        <div class="glass overflow-hidden shadow-neon-strong">
+            <div class="p-5 border-b border-gray-800 flex justify-between items-center bg-white/5">
+                <h3 class="font-bold flex items-center gap-2 text-neonPurple">
+                    <i class="fas fa-satellite-dish animate-pulse"></i>
+                    <span id="inboxTitle">صندوق الوارد</span>
                 </h3>
-                <span id="refreshTimer" class="text-[10px] text-slate-400 font-mono tracking-widest">AUTO-REFRESH: 5s</span>
+                <button onclick="clearInbox()" class="text-[10px] text-red-400 hover:text-red-300">
+                    <i class="fas fa-trash-alt"></i> <span id="btnClear">مسح</span>
+                </button>
             </div>
 
-            <div id="messagesContainer" class="space-y-3">
-                <div class="p-12 text-center rounded-4xl border-2 border-dashed border-slate-200 dark:border-slate-800">
-                    <div class="mb-4 text-slate-200 dark:text-slate-700">
-                        <i class="fas fa-inbox text-6xl"></i>
-                    </div>
-                    <p id="noMsgText" class="text-sm text-slate-400">لا توجد رسائل واردة حالياً</p>
+            <div id="messages" class="min-h-[250px] transition-all">
+                <div class="p-20 text-center">
+                    <div class="inline-block animate-bounce mb-4 text-gray-600"><i class="fas fa-arrow-down text-3xl"></i></div>
+                    <p id="waitingText" class="text-gray-500 text-sm italic">في انتظار وصول بيانات من السيرفر...</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <div id="readerModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-t-[2.5rem] sm:rounded-4xl p-8 shadow-2xl transition-transform transform translate-y-0 max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-start mb-6">
-                <h2 id="msgSubject" class="text-xl font-bold">...</h2>
-                <button onclick="closeReader()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="msgMeta" class="mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 text-xs space-y-1"></div>
-            <div id="msgContent" class="text-sm leading-relaxed overflow-x-hidden"></div>
-        </div>
-    </div>
-
     <script>
-        // --- Localization ---
+        // -- Configuration --
         let currentLang = 'ar';
-        const dict = {
-            ar: { heroTitle: "بريدك المؤقت أصبح أذكى", heroSub: "تخلص من الرسائل المزعجة واحصل على خصوصية تامة مع Doby Mail.", btnCopy: "نسخ البريد", btnRefresh: "تغيير", inboxTitle: "صندوق الوارد", noMsgText: "لا توجد رسائل واردة حالياً", lang: "EN" },
-            en: { heroTitle: "Your Smart Temp Mail", heroSub: "Ditch the spam and keep your privacy safe with Doby Mail.", btnCopy: "Copy Email", btnRefresh: "Refresh", inboxTitle: "Inbox", noMsgText: "No messages yet...", lang: "AR" }
+        const apiBase = "https://www.1secmail.com/api/v1/";
+        let email = '', user = '', domain = '';
+        let soundEnabled = true;
+
+        const langData = {
+            ar: { title: "منصة البريد الذكي", sub: "أمان كامل، خصوصية فائقة", copy: "نسخ", new: "جديد", qr: "QR كود", sound: "تنبيه", inbox: "صندوق الوارد", clear: "مسح", wait: "في انتظار وصول بيانات من السيرفر...", btn: "EN" },
+            en: { title: "Smart Mail Platform", sub: "Total Security, Ultra Privacy", copy: "Copy", new: "New", qr: "QR Code", sound: "Alert", inbox: "Inbox", clear: "Clear", wait: "Waiting for incoming data...", btn: "AR" }
         };
 
-        function toggleLang() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            const html = document.getElementById('htmlTag');
-            const d = dict[currentLang];
-            
-            html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            if(currentLang === 'en') html.classList.add('en-mode');
-            else html.classList.remove('en-mode');
-
-            document.getElementById('heroTitle').innerText = d.heroTitle;
-            document.getElementById('heroSub').innerText = d.heroSub;
-            document.getElementById('btnCopy').innerText = d.btnCopy;
-            document.getElementById('btnRefresh').innerText = d.btnRefresh;
-            document.getElementById('inboxTitle').innerText = d.inboxTitle;
-            document.getElementById('noMsgText').innerText = d.noMsgText;
-            document.getElementById('langLabel').innerText = d.lang;
-        }
-
-        // --- Core Logic ---
-        let user = '', domain = '';
-        const API = "https://www.1secmail.com/api/v1/";
-
-        async function init() {
-            const res = await fetch(`${API}?action=genEmailDefault`);
-            const data = await res.json();
-            const fullEmail = data[0];
-            [user, domain] = fullEmail.split('@');
-            document.getElementById('emailAddr').value = fullEmail;
-            checkInbox();
-        }
-
-        async function checkInbox() {
-            if(!user) return;
+        // -- Functions --
+        async function genEmail() {
             try {
-                const res = await fetch(`${API}?action=getMessages&login=${user}&domain=${domain}`);
+                // محاولة توليد البريد بطريقة تضمن العمل على الموبايل
+                const response = await fetch(`${apiBase}?action=genEmailDefault`);
+                const data = await response.json();
+                email = data[0];
+                [user, domain] = email.split('@');
+                document.getElementById('emailAddr').value = email;
+                document.getElementById('messages').innerHTML = `<div class="p-20 text-center text-neonBlue animate-pulse">${langData[currentLang].wait}</div>`;
+            } catch (error) {
+                document.getElementById('emailAddr').value = "Error Connecting...";
+                console.error("API Error:", error);
+            }
+        }
+
+        async function checkMail() {
+            if (!user) return;
+            try {
+                const res = await fetch(`${apiBase}?action=getMessages&login=${user}&domain=${domain}`);
                 const mails = await res.json();
-                renderMails(mails);
-            } catch(e) { console.log("Refresh error"); }
+                if (mails.length > 0) {
+                    if (soundEnabled) { /* Play ping sound logic */ }
+                    renderMails(mails);
+                }
+            } catch (e) { console.error("Update fail"); }
         }
 
         function renderMails(mails) {
-            const container = document.getElementById('messagesContainer');
-            if(mails.length === 0) return;
-            
+            const container = document.getElementById('messages');
             container.innerHTML = mails.map(m => `
-                <div onclick="readMail(${m.id})" class="p-5 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center text-white shrink-0">
-                        <i class="fas fa-envelope"></i>
+                <div class="p-5 border-b border-gray-800 hover:bg-neonBlue/5 cursor-pointer transition flex justify-between items-center group">
+                    <div>
+                        <div class="text-neonBlue font-bold text-sm">${m.from}</div>
+                        <div class="text-white text-xs mt-1">${m.subject}</div>
                     </div>
-                    <div class="overflow-hidden w-full">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <h4 class="font-bold text-sm truncate text-blue-500">${m.from}</h4>
-                            <span class="text-[10px] text-slate-400">${m.date.split(' ')[1]}</span>
-                        </div>
-                        <p class="text-xs text-slate-500 truncate">${m.subject || 'No Subject'}</p>
-                    </div>
+                    <i class="fas fa-chevron-left text-gray-700 group-hover:text-neonBlue transition"></i>
                 </div>
             `).join('');
         }
 
-        async function readMail(id) {
-            const res = await fetch(`${API}?action=readMessage&login=${user}&domain=${domain}&id=${id}`);
-            const m = await res.json();
-            document.getElementById('msgSubject').innerText = m.subject;
-            document.getElementById('msgMeta').innerHTML = `<b>From:</b> ${m.from}<br><b>Date:</b> ${m.date}`;
-            document.getElementById('msgContent').innerHTML = m.htmlBody || `<pre class="whitespace-pre-wrap font-sans">${m.body}</pre>`;
-            document.getElementById('readerModal').classList.remove('hidden');
+        function toggleLang() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const d = langData[currentLang];
+            document.getElementById('htmlTag').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            if(currentLang === 'en') document.body.classList.add('en-mode'); else document.body.classList.remove('en-mode');
+            
+            document.getElementById('mainTitle').innerText = d.title;
+            document.getElementById('subTitle').innerText = d.sub;
+            document.getElementById('btnCopy').innerText = d.copy;
+            document.getElementById('btnNew').innerText = d.new;
+            document.getElementById('btnQR').innerText = d.qr;
+            document.getElementById('btnSound').innerText = d.sound;
+            document.getElementById('inboxTitle').innerText = d.inbox;
+            document.getElementById('btnClear').innerText = d.clear;
+            document.getElementById('langBtn').innerText = d.btn;
         }
-
-        function closeReader() { document.getElementById('readerModal').classList.add('hidden'); }
-        function refreshEmail() { location.reload(); }
 
         function copyEmail() {
-            const copyText = document.getElementById("emailAddr");
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value);
-            const badge = document.getElementById('copyBadge');
-            badge.classList.remove('hidden');
-            setTimeout(() => badge.classList.add('hidden'), 2000);
+            const field = document.getElementById('emailAddr');
+            navigator.clipboard.writeText(field.value);
+            alert("تم النسخ بنجاح!");
         }
 
-        // --- UI Setup ---
-        document.getElementById('themeToggle').onclick = () => {
-            document.documentElement.classList.toggle('dark');
-            const icon = document.querySelector('#themeToggle i');
-            icon.classList.toggle('fa-moon');
-            icon.classList.toggle('fa-sun');
-        };
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundBtn').style.opacity = soundEnabled ? "1" : "0.5";
+        }
 
-        setInterval(checkInbox, 5000);
-        window.onload = init;
+        function clearInbox() {
+            document.getElementById('messages').innerHTML = `<div class="p-20 text-center text-gray-500">${langData[currentLang].wait}</div>`;
+        }
+
+        // Initialize
+        setInterval(checkMail, 5000);
+        window.onload = genEmail;
     </script>
 </body>
 </html>
