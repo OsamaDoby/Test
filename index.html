@@ -1,183 +1,216 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doby Mail - بريد مؤقت احترافي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Doby Mail | بريد مؤقت</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { primary: '#3b82f6' }
+                    colors: {
+                        brand: { 50: '#f0f7ff', 100: '#e0effe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+                    },
+                    borderRadius: { '3xl': '1.5rem', '4xl': '2rem' }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
-        body { font-family: 'Tajawal', sans-serif; transition: all 0.3s ease; }
-        .loader { border-top-color: #3498db; animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+        :root { --font-ar: 'Tajawal', sans-serif; --font-en: 'Plus Jakarta Sans', sans-serif; }
+        body { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-ar); }
+        .en-mode { font-family: var(--font-en); direction: ltr; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.05); }
+        .gradient-bg { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
+        .loading-shimmer { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen pb-10">
+<body class="bg-[#f8fafc] dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
 
-    <nav class="p-5 flex justify-between items-center max-w-6xl mx-auto">
-        <div class="flex items-center gap-2">
-            <div class="bg-primary p-2 rounded-lg text-white">
-                <i class="fas fa-bolt text-xl"></i>
+    <nav class="sticky top-0 z-40 w-full p-4 lg:px-8 flex justify-between items-center backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2 group cursor-pointer">
+            <div class="gradient-bg p-2.5 rounded-2xl text-white shadow-lg shadow-blue-500/20 group-hover:rotate-12 transition-transform">
+                <i class="fas fa-paper-plane"></i>
             </div>
-            <h1 class="text-2xl font-bold tracking-tight">Doby <span class="text-primary">Mail</span></h1>
+            <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent gradient-bg">Doby Mail</span>
         </div>
-        <button id="themeToggle" class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center transition-all active:scale-90">
-            <i class="fas fa-moon text-gray-600 dark:text-yellow-400"></i>
-        </button>
+        
+        <div class="flex items-center gap-2">
+            <button onclick="toggleLang()" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-all active:scale-90">
+                <span id="langLabel" class="text-xs font-bold uppercase">EN</span>
+            </button>
+            <button id="themeToggle" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 transition-all active:scale-90">
+                <i class="fas fa-moon dark:text-yellow-400 text-slate-600"></i>
+            </button>
+        </div>
     </nav>
 
-    <main class="max-w-3xl mx-auto px-4 mt-8">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold mb-2">بريدك المؤقت المجاني</h2>
-            <p class="text-gray-500 dark:text-gray-400 text-sm">احمِ خصوصيتك من الرسائل المزعجة بضغطة زر.</p>
+    <main class="max-w-4xl mx-auto px-5 pt-8 pb-20">
+        <div class="text-center mb-10">
+            <h2 id="heroTitle" class="text-3xl md:text-4xl font-extrabold mb-3">بريدك المؤقت أصبح أذكى</h2>
+            <p id="heroSub" class="text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">تخلص من الرسائل المزعجة واحصل على خصوصية تامة مع Doby Mail.</p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl border border-gray-100 dark:border-gray-700 mb-6">
-            <div class="relative mb-4">
-                <input type="text" id="emailAddr" readonly 
-                    class="w-full p-5 rounded-2xl bg-gray-50 dark:bg-gray-700/50 text-center font-mono text-lg border-2 border-dashed border-gray-300 dark:border-gray-600 outline-none"
-                    value="جاري التجهيز...">
-            </div>
-            
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="copyEmail()" class="bg-primary hover:bg-blue-600 text-white p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95">
-                    <i class="fas fa-copy"></i> نسخ
-                </button>
-                <button onclick="genEmail()" class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 text-gray-700 dark:text-white">
-                    <i class="fas fa-redo"></i> جديد
-                </button>
+        <div class="glass-card rounded-4xl p-6 shadow-2xl shadow-blue-500/5 mb-8 border border-white">
+            <div class="space-y-4">
+                <div class="relative">
+                    <input type="text" id="emailAddr" readonly 
+                        class="w-full h-16 px-6 rounded-2xl bg-slate-100/50 dark:bg-slate-900/50 text-center font-bold text-lg border-2 border-transparent focus:border-blue-500 outline-none transition-all dark:text-white" 
+                        value="Loading...">
+                    <div id="copyBadge" class="absolute top-0 right-0 left-0 -mt-2 hidden">
+                        <span class="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded-full mx-auto table">Copied!</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="copyEmail()" class="h-14 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg">
+                        <i class="fas fa-copy"></i> <span id="btnCopy">نسخ البريد</span>
+                    </button>
+                    <button onclick="refreshEmail()" class="h-14 bg-blue-500 text-white rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-500/20">
+                        <i class="fas fa-sync-alt"></i> <span id="btnRefresh">تغيير</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-700/30">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-inbox text-primary"></i>
-                    <span class="font-bold">صندوق الوارد</span>
-                </div>
-                <div id="statusIcon" class="flex items-center gap-2 text-xs text-green-500 font-medium">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                    مباشر
-                </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between px-2">
+                <h3 id="inboxTitle" class="font-bold flex items-center gap-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    صندوق الوارد
+                </h3>
+                <span id="refreshTimer" class="text-[10px] text-slate-400 font-mono tracking-widest">AUTO-REFRESH: 5s</span>
             </div>
 
-            <div id="messages" class="min-h-[300px]">
-                <div class="flex flex-col items-center justify-center p-20 text-gray-400">
-                    <i class="fas fa-envelope-open text-5xl mb-4 opacity-10"></i>
-                    <p class="text-sm">لا توجد رسائل حالياً</p>
+            <div id="messagesContainer" class="space-y-3">
+                <div class="p-12 text-center rounded-4xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <div class="mb-4 text-slate-200 dark:text-slate-700">
+                        <i class="fas fa-inbox text-6xl"></i>
+                    </div>
+                    <p id="noMsgText" class="text-sm text-slate-400">لا توجد رسائل واردة حالياً</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <div id="mailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-2xl rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="p-6 border-b dark:border-gray-700 flex justify-between items-center">
-                <h3 id="modalSubject" class="font-bold truncate pr-4">موضوع الرسالة</h3>
-                <button onclick="closeModal()" class="text-2xl">&times;</button>
+    <div id="readerModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-t-[2.5rem] sm:rounded-4xl p-8 shadow-2xl transition-transform transform translate-y-0 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-6">
+                <h2 id="msgSubject" class="text-xl font-bold">...</h2>
+                <button onclick="closeReader()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div id="modalBody" class="p-6 overflow-y-auto text-sm leading-relaxed">
-                </div>
+            <div id="msgMeta" class="mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 text-xs space-y-1"></div>
+            <div id="msgContent" class="text-sm leading-relaxed overflow-x-hidden"></div>
         </div>
     </div>
 
     <script>
-        // --- الأساسيات والوضع الليلي ---
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.onclick = () => {
-            document.documentElement.classList.toggle('dark');
-            const icon = themeToggle.querySelector('i');
-            icon.classList.toggle('fa-moon');
-            icon.classList.toggle('fa-sun');
+        // --- Localization ---
+        let currentLang = 'ar';
+        const dict = {
+            ar: { heroTitle: "بريدك المؤقت أصبح أذكى", heroSub: "تخلص من الرسائل المزعجة واحصل على خصوصية تامة مع Doby Mail.", btnCopy: "نسخ البريد", btnRefresh: "تغيير", inboxTitle: "صندوق الوارد", noMsgText: "لا توجد رسائل واردة حالياً", lang: "EN" },
+            en: { heroTitle: "Your Smart Temp Mail", heroSub: "Ditch the spam and keep your privacy safe with Doby Mail.", btnCopy: "Copy Email", btnRefresh: "Refresh", inboxTitle: "Inbox", noMsgText: "No messages yet...", lang: "AR" }
         };
 
-        let currentEmail = "";
-        let emailUser = "";
-        let emailDomain = "";
+        function toggleLang() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const html = document.getElementById('htmlTag');
+            const d = dict[currentLang];
+            
+            html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            if(currentLang === 'en') html.classList.add('en-mode');
+            else html.classList.remove('en-mode');
 
-        // --- توليد ايميل جديد ---
-        async function genEmail() {
-            try {
-                const res = await fetch('https://www.1secmail.com/api/v1/?action=genEmailDefault');
-                const data = await res.json();
-                currentEmail = data[0];
-                [emailUser, emailDomain] = currentEmail.split('@');
-                document.getElementById('emailAddr').value = currentEmail;
-                document.getElementById('messages').innerHTML = `
-                    <div class="flex flex-col items-center justify-center p-20 text-gray-400">
-                        <i class="fas fa-sync fa-spin text-3xl mb-4 text-primary"></i>
-                        <p class="text-sm">بانتظار وصول رسائل جديدة...</p>
-                    </div>`;
-                checkMail();
-            } catch (e) {
-                alert("خطأ في الاتصال بالسيرفر");
-            }
+            document.getElementById('heroTitle').innerText = d.heroTitle;
+            document.getElementById('heroSub').innerText = d.heroSub;
+            document.getElementById('btnCopy').innerText = d.btnCopy;
+            document.getElementById('btnRefresh').innerText = d.btnRefresh;
+            document.getElementById('inboxTitle').innerText = d.inboxTitle;
+            document.getElementById('noMsgText').innerText = d.noMsgText;
+            document.getElementById('langLabel').innerText = d.lang;
         }
 
-        function copyEmail() {
-            const el = document.getElementById('emailAddr');
-            el.select();
-            navigator.clipboard.writeText(el.value);
-            // تغذية بصرية بسيطة للأيفون
-            const btn = event.currentTarget;
-            btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
-            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> نسخ'; }, 2000);
+        // --- Core Logic ---
+        let user = '', domain = '';
+        const API = "https://www.1secmail.com/api/v1/";
+
+        async function init() {
+            const res = await fetch(`${API}?action=genEmailDefault`);
+            const data = await res.json();
+            const fullEmail = data[0];
+            [user, domain] = fullEmail.split('@');
+            document.getElementById('emailAddr').value = fullEmail;
+            checkInbox();
         }
 
-        // --- فحص البريد الوارد ---
-        async function checkMail() {
-            if (!emailUser) return;
+        async function checkInbox() {
+            if(!user) return;
             try {
-                const res = await fetch(`https://www.1secmail.com/api/v1/?action=getMessages&login=${emailUser}&domain=${emailDomain}`);
+                const res = await fetch(`${API}?action=getMessages&login=${user}&domain=${domain}`);
                 const mails = await res.json();
-                
-                if (mails.length > 0) {
-                    renderMessages(mails);
-                }
-            } catch (e) { console.log("خطأ في التحديث"); }
+                renderMails(mails);
+            } catch(e) { console.log("Refresh error"); }
         }
 
-        function renderMessages(mails) {
-            const container = document.getElementById('messages');
+        function renderMails(mails) {
+            const container = document.getElementById('messagesContainer');
+            if(mails.length === 0) return;
+            
             container.innerHTML = mails.map(m => `
-                <div onclick="readMail(${m.id})" class="p-5 border-b dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/10 cursor-pointer active:bg-gray-100 transition">
-                    <div class="flex justify-between items-start mb-1">
-                        <span class="font-bold text-primary truncate w-2/3 text-right">${m.from}</span>
-                        <span class="text-[10px] text-gray-400">${m.date.split(' ')[1]}</span>
+                <div onclick="readMail(${m.id})" class="p-5 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center text-white shrink-0">
+                        <i class="fas fa-envelope"></i>
                     </div>
-                    <div class="text-sm font-medium text-gray-600 dark:text-gray-300 truncate">${m.subject || '(بدون عنوان)'}</div>
+                    <div class="overflow-hidden w-full">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <h4 class="font-bold text-sm truncate text-blue-500">${m.from}</h4>
+                            <span class="text-[10px] text-slate-400">${m.date.split(' ')[1]}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate">${m.subject || 'No Subject'}</p>
+                    </div>
                 </div>
             `).join('');
         }
 
-        // --- قراءة رسالة محددة ---
         async function readMail(id) {
-            const res = await fetch(`https://www.1secmail.com/api/v1/?action=readMessage&login=${emailUser}&domain=${emailDomain}&id=${id}`);
-            const data = await res.json();
-            
-            document.getElementById('modalSubject').innerText = data.subject;
-            document.getElementById('modalBody').innerHTML = data.htmlBody || `<pre class="whitespace-pre-wrap">${data.body}</pre>`;
-            document.getElementById('mailModal').classList.remove('hidden');
+            const res = await fetch(`${API}?action=readMessage&login=${user}&domain=${domain}&id=${id}`);
+            const m = await res.json();
+            document.getElementById('msgSubject').innerText = m.subject;
+            document.getElementById('msgMeta').innerHTML = `<b>From:</b> ${m.from}<br><b>Date:</b> ${m.date}`;
+            document.getElementById('msgContent').innerHTML = m.htmlBody || `<pre class="whitespace-pre-wrap font-sans">${m.body}</pre>`;
+            document.getElementById('readerModal').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('mailModal').classList.add('hidden');
+        function closeReader() { document.getElementById('readerModal').classList.add('hidden'); }
+        function refreshEmail() { location.reload(); }
+
+        function copyEmail() {
+            const copyText = document.getElementById("emailAddr");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            const badge = document.getElementById('copyBadge');
+            badge.classList.remove('hidden');
+            setTimeout(() => badge.classList.add('hidden'), 2000);
         }
 
-        // تحديث كل 6 ثوانٍ
-        setInterval(checkMail, 6000);
-        window.onload = genEmail;
+        // --- UI Setup ---
+        document.getElementById('themeToggle').onclick = () => {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.querySelector('#themeToggle i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        };
+
+        setInterval(checkInbox, 5000);
+        window.onload = init;
     </script>
 </body>
 </html>
