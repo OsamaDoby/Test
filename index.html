@@ -1,220 +1,92 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlTag">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doby Mail | Neo Generation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        neonBlue: '#00f2ff',
-                        neonPurple: '#bc13fe',
-                    },
-                    boxShadow: {
-                        'neon': '0 0 15px rgba(0, 242, 255, 0.5)',
-                        'neon-strong': '0 0 25px rgba(188, 19, 254, 0.6)',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, Copy, RefreshCw, Trash2, Moon, Sun, Globe } from 'lucide-react';
+
+const DoByDoBy = () => {
+  const [email, setEmail] = useState('جاري التوليد...');
+  const [messages, setMessages] = useState([]);
+  const [isDark, setIsDark] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const [lang, setLang] = useState('ar');
+  const [timeLeft, setTimeLeft] = useState(600); // 10 دقائق
+
+  // نصوص الموقع للغتين
+  const t = {
+    ar: { title: "دوبي دوبي", sub: "بريد مؤقت ذكي وسريع", copy: "نسخ", refresh: "تحديث", inbox: "الرسائل الواردة", empty: "في انتظار وصول رسائل..." },
+    en: { title: "DoBy DoBy", sub: "Smart & Fast Temp Mail", copy: "Copy", refresh: "Refresh", inbox: "Inbox", empty: "Waiting for incoming emails..." }
+  };
+
+  // توليد إيميل عشوائي (مثال مبسط باستخدام API خارجي)
+  const generateEmail = async () => {
+    const randomName = Math.random().toString(36).substring(7);
+    setEmail(`${randomName}@doby-doby.com`);
+    setMessages([]);
+    setTimeLeft(600);
+  };
+
+  useEffect(() => {
+    generateEmail();
+    const timer = setInterval(() => setTimeLeft(prev => (prev > 0 ? prev - 1 : 0)), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={`${isDark ? 'dark' : ''} min-h-screen transition-colors duration-500`}>
+      <div className="bg-slate-50 dark:bg-slate-900 min-h-screen font-sans text-slate-900 dark:text-white p-4 md:p-8">
         
-        body { 
-            background: #050b18; 
-            font-family: 'Tajawal', sans-serif; 
-            color: #fff;
-            overflow-x: hidden;
-        }
-        .en-mode { font-family: 'Orbitron', sans-serif; direction: ltr; }
-        
-        /* تأثير الخلفية المتحركة */
-        .bg-animate {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
-            opacity: 0.15; z-index: -1; animation: pulse bgMove 10s infinite alternate;
-        }
+        {/* Header */}
+        <header className="max-w-4xl mx-auto flex justify-between items-center mb-12">
+          <motion.h1 initial={{y: -20}} animate={{y: 0}} className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            DoBy DoBy
+          </motion.h1>
+          <div className="flex gap-4">
+            <button onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} className="p-2 rounded-full bg-white dark:bg-slate-800 shadow-lg"><Globe size={20} /></button>
+            <button onClick={() => setIsDark(!isDark)} className="p-2 rounded-full bg-white dark:bg-slate-800 shadow-lg">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button>
+          </div>
+        </header>
 
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-        }
-
-        .neon-border {
-            border: 1px solid var(--tw-neonBlue);
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
-        }
-
-        @keyframes pulse { 0% { opacity: 0.1; } 100% { opacity: 0.25; } }
-    </style>
-</head>
-<body class="dark">
-    <div class="bg-animate"></div>
-
-    <nav class="p-6 flex justify-between items-center max-w-5xl mx-auto">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 glass flex items-center justify-center border border-neonBlue shadow-neon">
-                <i class="fas fa-robot text-neonBlue text-xl"></i>
-            </div>
-            <span class="text-2xl font-bold tracking-widest text-white">DOBY<span class="text-neonBlue">MAIL</span></span>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="toggleLang()" class="glass px-4 py-2 text-xs font-bold hover:border-neonBlue transition" id="langBtn">EN</button>
-            <button onclick="toggleTheme()" class="glass p-2 w-10 h-10 flex items-center justify-center"><i class="fas fa-sun text-yellow-400"></i></button>
-        </div>
-    </nav>
-
-    <main class="max-w-4xl mx-auto px-6 mt-10">
-        <div class="glass p-8 relative overflow-hidden mb-10">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-neonBlue opacity-20 blur-3xl"></div>
-            
-            <div class="text-center mb-8">
-                <h1 id="mainTitle" class="text-3xl font-bold mb-2">منصة البريد الذكي</h1>
-                <p id="subTitle" class="text-gray-400 text-sm">أمان كامل، خصوصية فائقة، وهوية رقمية مؤقتة.</p>
+        {/* Main Card */}
+        <main className="max-w-2xl mx-auto text-center">
+          <motion.div initial={{opacity: 0, scale: 0.9}} animate={{opacity: 1, scale: 1}} className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-2xl border border-blue-100 dark:border-slate-700">
+            <p className="text-sm opacity-60 mb-2">{t[lang].sub}</p>
+            <div className="flex flex-col md:flex-row items-center gap-4 bg-slate-100 dark:bg-slate-700 p-4 rounded-2xl mb-6">
+              <span className="text-xl font-mono flex-1 break-all">{email}</span>
+              <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-all active:scale-95">
+                <Copy size={18} /> {t[lang].copy}
+              </button>
             </div>
 
-            <div class="relative group mb-6">
-                <input type="text" id="emailAddr" readonly 
-                    class="w-full bg-black/40 border border-gray-700 p-5 rounded-xl text-center font-mono text-xl text-neonBlue outline-none focus:border-neonBlue transition-all shadow-inner"
-                    value="WAITING FOR SIGNAL...">
+            {/* Timer Counter */}
+            <div className="text-sm mb-4">
+              <span className="text-red-500 font-bold">{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <button onclick="copyEmail()" class="glass p-4 hover:bg-neonBlue/20 transition flex flex-col items-center gap-2 group">
-                    <i class="fas fa-copy group-hover:scale-110"></i>
-                    <span class="text-[10px]" id="btnCopy">نسخ</span>
-                </button>
-                <button onclick="genEmail()" class="glass p-4 hover:bg-neonPurple/20 transition flex flex-col items-center gap-2 group border-neonPurple/30">
-                    <i class="fas fa-sync-alt group-hover:rotate-180 duration-500"></i>
-                    <span class="text-[10px]" id="btnNew">جديد</span>
-                </button>
-                <button onclick="downloadQR()" class="glass p-4 hover:bg-green-500/20 transition flex flex-col items-center gap-2">
-                    <i class="fas fa-qrcode"></i>
-                    <span class="text-[10px]" id="btnQR">QR كود</span>
-                </button>
-                <button onclick="toggleSound()" id="soundBtn" class="glass p-4 hover:bg-yellow-500/20 transition flex flex-col items-center gap-2">
-                    <i class="fas fa-bell"></i>
-                    <span class="text-[10px]" id="btnSound">تنبيه</span>
-                </button>
+            <div className="flex justify-center gap-4">
+              <button onClick={generateEmail} className="flex items-center gap-2 text-slate-500 hover:text-blue-500 transition-colors">
+                <RefreshCw size={18} /> {t[lang].refresh}
+              </button>
             </div>
-        </div>
+          </motion.div>
 
-        <div class="glass overflow-hidden shadow-neon-strong">
-            <div class="p-5 border-b border-gray-800 flex justify-between items-center bg-white/5">
-                <h3 class="font-bold flex items-center gap-2 text-neonPurple">
-                    <i class="fas fa-satellite-dish animate-pulse"></i>
-                    <span id="inboxTitle">صندوق الوارد</span>
-                </h3>
-                <button onclick="clearInbox()" class="text-[10px] text-red-400 hover:text-red-300">
-                    <i class="fas fa-trash-alt"></i> <span id="btnClear">مسح</span>
-                </button>
+          {/* Inbox Section */}
+          <section className="mt-12 text-right" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Mail size={22} className="text-blue-500" /> {t[lang].inbox}
+            </h3>
+            <div className="space-y-4">
+              {messages.length === 0 ? (
+                <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="p-12 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl opacity-50">
+                   {t[lang].empty}
+                </motion.div>
+              ) : (
+                /* هنا يتم عرض الرسائل الحقيقية عند ربط الـ API */
+                null
+              )}
             </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  );
+};
 
-            <div id="messages" class="min-h-[250px] transition-all">
-                <div class="p-20 text-center">
-                    <div class="inline-block animate-bounce mb-4 text-gray-600"><i class="fas fa-arrow-down text-3xl"></i></div>
-                    <p id="waitingText" class="text-gray-500 text-sm italic">في انتظار وصول بيانات من السيرفر...</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        // -- Configuration --
-        let currentLang = 'ar';
-        const apiBase = "https://www.1secmail.com/api/v1/";
-        let email = '', user = '', domain = '';
-        let soundEnabled = true;
-
-        const langData = {
-            ar: { title: "منصة البريد الذكي", sub: "أمان كامل، خصوصية فائقة", copy: "نسخ", new: "جديد", qr: "QR كود", sound: "تنبيه", inbox: "صندوق الوارد", clear: "مسح", wait: "في انتظار وصول بيانات من السيرفر...", btn: "EN" },
-            en: { title: "Smart Mail Platform", sub: "Total Security, Ultra Privacy", copy: "Copy", new: "New", qr: "QR Code", sound: "Alert", inbox: "Inbox", clear: "Clear", wait: "Waiting for incoming data...", btn: "AR" }
-        };
-
-        // -- Functions --
-        async function genEmail() {
-            try {
-                // محاولة توليد البريد بطريقة تضمن العمل على الموبايل
-                const response = await fetch(`${apiBase}?action=genEmailDefault`);
-                const data = await response.json();
-                email = data[0];
-                [user, domain] = email.split('@');
-                document.getElementById('emailAddr').value = email;
-                document.getElementById('messages').innerHTML = `<div class="p-20 text-center text-neonBlue animate-pulse">${langData[currentLang].wait}</div>`;
-            } catch (error) {
-                document.getElementById('emailAddr').value = "Error Connecting...";
-                console.error("API Error:", error);
-            }
-        }
-
-        async function checkMail() {
-            if (!user) return;
-            try {
-                const res = await fetch(`${apiBase}?action=getMessages&login=${user}&domain=${domain}`);
-                const mails = await res.json();
-                if (mails.length > 0) {
-                    if (soundEnabled) { /* Play ping sound logic */ }
-                    renderMails(mails);
-                }
-            } catch (e) { console.error("Update fail"); }
-        }
-
-        function renderMails(mails) {
-            const container = document.getElementById('messages');
-            container.innerHTML = mails.map(m => `
-                <div class="p-5 border-b border-gray-800 hover:bg-neonBlue/5 cursor-pointer transition flex justify-between items-center group">
-                    <div>
-                        <div class="text-neonBlue font-bold text-sm">${m.from}</div>
-                        <div class="text-white text-xs mt-1">${m.subject}</div>
-                    </div>
-                    <i class="fas fa-chevron-left text-gray-700 group-hover:text-neonBlue transition"></i>
-                </div>
-            `).join('');
-        }
-
-        function toggleLang() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            const d = langData[currentLang];
-            document.getElementById('htmlTag').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            if(currentLang === 'en') document.body.classList.add('en-mode'); else document.body.classList.remove('en-mode');
-            
-            document.getElementById('mainTitle').innerText = d.title;
-            document.getElementById('subTitle').innerText = d.sub;
-            document.getElementById('btnCopy').innerText = d.copy;
-            document.getElementById('btnNew').innerText = d.new;
-            document.getElementById('btnQR').innerText = d.qr;
-            document.getElementById('btnSound').innerText = d.sound;
-            document.getElementById('inboxTitle').innerText = d.inbox;
-            document.getElementById('btnClear').innerText = d.clear;
-            document.getElementById('langBtn').innerText = d.btn;
-        }
-
-        function copyEmail() {
-            const field = document.getElementById('emailAddr');
-            navigator.clipboard.writeText(field.value);
-            alert("تم النسخ بنجاح!");
-        }
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundBtn').style.opacity = soundEnabled ? "1" : "0.5";
-        }
-
-        function clearInbox() {
-            document.getElementById('messages').innerHTML = `<div class="p-20 text-center text-gray-500">${langData[currentLang].wait}</div>`;
-        }
-
-        // Initialize
-        setInterval(checkMail, 5000);
-        window.onload = genEmail;
-    </script>
-</body>
-</html>
+export default DoByDoBy;
