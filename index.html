@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FC ESNA 2 - Finance Pro System</title>
+    <title>FC ESNA 2 - Finance Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -14,8 +14,6 @@
             --input-bg: rgba(30, 41, 59, 0.7);
             --primary-neon: #00f2ff;
             --secondary-neon: #7000ff;
-            --profit-color: #22c55e;
-            --risk-color: #ef4444;
             --border-color: rgba(0, 242, 255, 0.2);
             --glow: 0 0 15px rgba(0, 242, 255, 0.3);
         }
@@ -57,213 +55,250 @@
             margin-bottom: 20px;
         }
 
-        /* اللوجو المتوهج */
-        .logo-area { text-align: center; margin-bottom: 1.5rem; }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .controls-left { display: flex; gap: 8px; }
+
+        .btn-tool {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* مفتاح التحويل الجديد */
+        .mode-selector {
+            display: flex;
+            background: var(--input-bg);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: 'Cairo';
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+        .mode-btn.active {
+            background: var(--primary-neon);
+            color: #000;
+            font-weight: bold;
+        }
+
         .logo-main {
             font-size: 2rem; font-weight: 800; color: var(--primary-neon);
-            animation: neon-pulse 2s infinite alternate; letter-spacing: 2px;
+            text-align: center; animation: neon-pulse 2s infinite alternate;
         }
         @keyframes neon-pulse {
-            from { text-shadow: 0 0 10px var(--primary-neon); transform: scale(1); }
-            to { text-shadow: 0 0 25px var(--primary-neon), 0 0 40px var(--secondary-neon); transform: scale(1.03); }
+            from { text-shadow: 0 0 5px var(--primary-neon); transform: scale(1); }
+            to { text-shadow: 0 0 15px var(--primary-neon); transform: scale(1.02); }
         }
 
-        .header-actions { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
-        .btn-tool { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
-
-        /* مدخلات البيانات */
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .input-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 5px; font-size: 0.8rem; opacity: 0.8; font-weight: 600; }
-        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none; }
-        input:focus { border-color: var(--primary-neon); box-shadow: var(--glow); }
-
-        /* لوحة العدادات الذكية */
-        .smart-panel {
-            margin-top: 1rem; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px solid var(--border-color);
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.8rem; opacity: 0.8; }
+        input {
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);
+            background: var(--input-bg); color: var(--text-color); outline: none;
         }
-        .gauge-container { margin-bottom: 15px; }
-        .gauge-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; }
-        .gauge-bar { height: 8px; background: #334155; border-radius: 4px; overflow: hidden; }
-        .gauge-fill { height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
+        input:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* النتائج */
-        .results { margin: 1.5rem 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--border-color); }
-        .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
-        .result-item span:last-child { color: var(--primary-neon); font-weight: bold; }
-
-        /* لوحة المقارنة */
-        .comparison-box {
-            width: 100%; max-width: 420px; padding: 1.5rem; background: var(--card-bg); border-radius: 20px; 
-            border: 1px solid var(--secondary-neon); margin-bottom: 20px; display: none;
+        .smart-indicators {
+            margin-top: 10px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px solid var(--border-color);
         }
-        .comparison-box.active { display: block; animation: slideIn 0.5s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .indicator-item { margin-bottom: 8px; }
+        .indicator-label { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 4px; }
+        .indicator-bar { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; }
+        .indicator-fill { height: 100%; width: 0%; transition: width 0.5s; }
 
-        .save-btn { width: 100%; background: transparent; color: var(--primary-neon); border: 1px solid var(--primary-neon); padding: 14px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .save-btn:hover { background: var(--primary-neon); color: #000; }
+        .results {
+            margin-top: 1.5rem; padding: 15px; background: rgba(0, 0, 0, 0.15); border-radius: 15px; border: 1px solid var(--border-color);
+        }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+        .result-item.highlight { border-top: 1px solid var(--border-color); padding-top: 10px; font-size: 1rem; color: var(--primary-neon); }
 
-        /* أيقونات التواصل */
-        .footer-social { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
-        .social-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .icon-fb { background: #1877F2; } .icon-wa { background: #25d366; } .icon-ig { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
+        .save-btn {
+            width: 100%; background: transparent; color: var(--primary-neon); border: 1px solid var(--primary-neon);
+            padding: 14px; border-radius: 15px; font-weight: bold; cursor: pointer; margin-top: 1rem;
+        }
+
+        .info-box { width: 100%; max-width: 420px; padding: 1.5rem; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 80px; font-size: 0.8rem; }
+
+        .footer-social { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .social-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; }
+        .icon-wa { background: #25d366; } .icon-ig { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
     </style>
 </head>
 <body>
 
 <div class="container" id="calculatorCard">
     <div class="header-actions">
-        <div>
-            <button class="btn-tool" onclick="toggleLang()" id="langBtn">EN</button>
+        <div class="controls-left">
+            <button class="btn-tool" onclick="toggleLang()">EN</button>
             <button class="btn-tool" onclick="toggleTheme()" id="themeBtn">🌙</button>
         </div>
         <button class="btn-tool" style="color:#ef4444" onclick="resetAll()">مسح</button>
     </div>
 
-    <div class="logo-area">
-        <div class="logo-main">FC ESNA 2</div>
-        <div class="logo-sub">Finance Calculator</div>
+    <div class="logo-main">FC ESNA 2</div>
+    <p style="text-align:center; font-size:0.7rem; opacity:0.6; margin-bottom:1rem;">FINANCE SYSTEM</p>
+
+    <div class="mode-selector">
+        <button class="mode-btn active" id="modeCalc" onclick="setMode('calc')">حساب القسط</button>
+        <button class="mode-btn" id="modeCheck" onclick="setMode('check')">كشف فائدة خارجي</button>
     </div>
 
     <div class="input-group">
-        <label>المبلغ الأساسي</label>
+        <label>أصل المبلغ</label>
         <input type="number" id="amount" placeholder="0.00" oninput="calculate()">
     </div>
 
     <div class="input-row">
         <div class="input-group">
-            <label>المصاريف (%)</label>
+            <label>مصاريف إدارية (%)</label>
             <input type="number" id="adminRate" value="5" oninput="calculate()">
         </div>
         <div class="input-group">
-            <label>الفايدة (%)</label>
-            <input type="number" id="interest" placeholder="0" oninput="calculate()">
+            <label id="dynamicLabel">الفايدة (%)</label>
+            <input type="number" id="dynamicInput" placeholder="0" oninput="calculate()">
         </div>
     </div>
 
     <div class="input-group">
-        <label>المدة (شهور)</label>
+        <label>المدة (بالشهور)</label>
         <input type="number" id="months" placeholder="0" oninput="calculate()">
     </div>
 
-    <div class="smart-panel">
-        <div class="gauge-container">
-            <div class="gauge-label">
-                <span>مؤشر الربحية (صافي فوائد + عمولة)</span>
-                <span id="profitVal">0</span>
-            </div>
-            <div class="gauge-bar"><div id="profitFill" class="gauge-fill" style="background: var(--profit-color)"></div></div>
+    <div class="smart-indicators">
+        <div class="indicator-item">
+            <div class="indicator-label"><span>إجمالي الربح (فوائد + مصاريف)</span><span id="profitVal">0</span></div>
+            <div class="indicator-bar"><div id="profitFill" class="indicator-fill" style="background: #22c55e;"></div></div>
         </div>
-        <div class="gauge-container">
-            <div class="gauge-label">
-                <span>مستوى مخاطرة القسط</span>
-                <span id="riskLevel">آمن</span>
-            </div>
-            <div class="gauge-bar"><div id="riskFill" class="gauge-fill"></div></div>
+        <div class="indicator-item">
+            <div class="indicator-label"><span>مستوى مخاطرة القسط</span><span id="riskText">آمن</span></div>
+            <div class="indicator-bar"><div id="riskFill" class="indicator-fill"></div></div>
         </div>
     </div>
 
     <div class="results">
-        <div class="result-item"><span>القسط الشهري:</span> <span id="monthlyPayment">0</span></div>
-        <div class="result-item" style="border-top: 1px solid var(--border-color); padding-top:10px;">
-            <span>صافي المستلم النهائي:</span> <span id="netAmount" style="font-size: 1.1rem; color: var(--secondary-neon);">0</span>
-        </div>
+        <div class="result-item"><span>المصاريف الإدارية:</span> <span id="adminFee">0</span></div>
+        <div class="result-item"><span>الصافي بعد المصاريف:</span> <span id="netAfterAdmin">0</span></div>
+        <div class="result-item"><span>إجمالي الفائدة:</span> <span id="totalInterestVal">0</span></div>
+        <div class="result-item" id="finalLabelRow"><span>القسط الشهري (مقرب):</span> <span id="finalResult" style="color: var(--secondary-neon);">0</span></div>
+        <div class="result-item highlight"><span>صافي المستلم النهائي:</span> <span id="netAmount">0</span></div>
     </div>
 
-    <button class="save-btn" onclick="downloadImage()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        <span>تصدير بيانات العملية</span>
-    </button>
+    <button class="save-btn" onclick="downloadImage()">تصدير بيانات العملية</button>
 </div>
 
-<div id="comparisonBox" class="comparison-box">
-    <h3 style="margin-top:0; color:var(--primary-neon); font-size: 1rem;">💡 سيناريو مقترح (أفضل للمكتب)</h3>
-    <p id="suggestionText" style="font-size: 0.85rem; opacity: 0.9;"></p>
-    <div class="result-item"><span>القسط في الاقتراح:</span> <span id="suggestedInstallment">0</span></div>
-    <div class="result-item"><span>زيادة الربح المتوقعة:</span> <span id="extraProfit" style="color:var(--profit-color)">0</span></div>
+<div class="info-box">
+    <h3 id="infoTitle">دليل الاستخدام</h3>
+    <ul id="infoList">
+        <li><b>وضع حساب القسط:</b> أدخل المبلغ والفايدة لتعرف القسط.</li>
+        <li><b>وضع كشف الفائدة:</b> أدخل المبلغ والقسط اللي العميل قالهولك عشان تعرف الشركة التانية بتحسب فايدة كام %.</li>
+        <li>يتم جبر القسط لأقرب 5 جنيهات دائماً.</li>
+    </ul>
 </div>
 
 <div class="footer-social">
-    <a href="https://wa.me/message/FJEGUNCJ4JX7P1" class="social-icon icon-wa" target="_blank">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.06 3.965L0 16l4.232-1.11a7.839 7.839 0 0 0 3.758.955h.001c4.438 0 8.044-3.606 8.048-8.046a7.848 7.848 0 0 0-2.438-5.473l-.001-.001ZM10.582 13.074c-1.023.36-2.148.165-3.18-.35l-.247-.122-2.51.659.67-2.44-.134-.213a6.71 6.71 0 0 1-1.03-3.51c0-3.712 3.023-6.735 6.737-6.735 1.8 0 3.49.7 4.76 1.97a6.69 6.69 0 0 1 1.97 4.76c0 3.712-3.024 6.736-6.74 6.736l-.003-.001Z"/></svg>
-    </a>
-    <a href="https://www.instagram.com/osamamasrawy?igsh=MWJqcnhhMWd6MjNxNQ%3D%3D" class="social-icon icon-ig" target="_blank">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.282.11-.705.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
-    </a>
+    <a href="https://wa.me/message/FJEGUNCJ4JX7P1" class="social-icon icon-wa" target="_blank">WA</a>
+    <a href="https://www.instagram.com/osamamasrawy" class="social-icon icon-ig" target="_blank">IG</a>
 </div>
 
 <script>
-    function toggleTheme() {
-        const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', theme);
+    let currentMode = 'calc'; // calc or check
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('modeCalc').classList.toggle('active', mode === 'calc');
+        document.getElementById('modeCheck').classList.toggle('active', mode === 'check');
+        
+        const label = document.getElementById('dynamicLabel');
+        const input = document.getElementById('dynamicInput');
+        const finalLabel = document.getElementById('finalLabelRow').querySelector('span:first-child');
+
+        if (mode === 'calc') {
+            label.innerText = "الفايدة (%)";
+            input.placeholder = "0";
+            finalLabel.innerText = "القسط الشهري (مقرب):";
+        } else {
+            label.innerText = "القسط الشهري";
+            input.placeholder = "ادخل قسط العميل";
+            finalLabel.innerText = "نسبة الفايدة المحسوبة:";
+        }
+        resetAll();
     }
 
     function calculate() {
         const amount = parseFloat(document.getElementById('amount').value) || 0;
         const adminRate = parseFloat(document.getElementById('adminRate').value) || 0;
-        const interestRate = parseFloat(document.getElementById('interest').value) || 0;
+        const dynamicVal = parseFloat(document.getElementById('dynamicInput').value) || 0;
         const months = parseInt(document.getElementById('months').value) || 0;
 
-        if (amount <= 0) return;
-
-        // الحسبة الأساسية
         const adminFee = amount * (adminRate / 100);
-        const totalInterest = amount * (interestRate / 100) * (months / 12);
-        const rawMonthly = (amount + totalInterest) / (months || 1);
-        const roundedMonthly = Math.ceil(rawMonthly / 5) * 5;
-        const totalProfit = adminFee + (roundedMonthly * months - amount);
-
-        document.getElementById('monthlyPayment').innerText = roundedMonthly.toLocaleString();
-        document.getElementById('netAmount').innerText = (amount - adminFee - roundedMonthly).toLocaleString();
-
-        // تحديث عداد الربحية (نسبة الربح من المبلغ الأساسي)
-        const profitPercent = Math.min((totalProfit / amount) * 100, 100);
-        document.getElementById('profitFill').style.width = profitPercent + '%';
-        document.getElementById('profitVal').innerText = Math.floor(totalProfit).toLocaleString();
-
-        // مؤشر المخاطر (لو القسط > 25% من المبلغ يبقى خطر)
-        const riskPercent = Math.min((roundedMonthly / amount) * 400, 100);
-        const riskFill = document.getElementById('riskFill');
-        const riskText = document.getElementById('riskLevel');
-        riskFill.style.width = riskPercent + '%';
+        const netAfterAdmin = amount - adminFee;
         
-        if (riskPercent < 30) { riskFill.style.background = '#22c55e'; riskText.innerText = 'آمن جداً'; }
-        else if (riskPercent < 60) { riskFill.style.background = '#f59e0b'; riskText.innerText = 'متوسط'; }
-        else { riskFill.style.background = '#ef4444'; riskText.innerText = 'عالي المخاطر'; }
+        let interestRate, roundedMonthly, totalInterest;
 
-        // توليد سيناريو مقارنة تلقائي
-        showComparison(amount, interestRate, months, totalProfit);
+        if (currentMode === 'calc') {
+            interestRate = dynamicVal;
+            totalInterest = amount * (interestRate / 100) * (months / 12);
+            const rawMonthly = months > 0 ? (amount + totalInterest) / months : 0;
+            roundedMonthly = Math.ceil(rawMonthly / 5) * 5;
+            document.getElementById('finalResult').innerText = roundedMonthly.toLocaleString();
+            document.getElementById('totalInterestVal').innerText = totalInterest.toLocaleString();
+        } else {
+            // كشف الفائدة: الفائدة = ((القسط * الشهور) - الأصل) / الأصل / (الشهور/12)
+            roundedMonthly = dynamicVal;
+            const totalReturn = roundedMonthly * months;
+            totalInterest = totalReturn - amount;
+            interestRate = (amount > 0 && months > 0) ? (totalInterest / amount) / (months / 12) * 100 : 0;
+            document.getElementById('finalResult').innerText = interestRate.toFixed(2) + " %";
+            document.getElementById('totalInterestVal').innerText = Math.max(0, totalInterest).toLocaleString();
+        }
+
+        const netFinal = amount > 0 ? (netAfterAdmin - (currentMode === 'calc' ? roundedMonthly : dynamicVal)) : 0;
+        document.getElementById('adminFee').innerText = adminFee.toLocaleString();
+        document.getElementById('netAfterAdmin').innerText = netAfterAdmin.toLocaleString();
+        document.getElementById('netAmount').innerText = Math.max(0, Math.floor(netFinal)).toLocaleString();
+
+        // تحديث المؤشرات
+        const totalProfit = adminFee + totalInterest;
+        document.getElementById('profitVal').innerText = Math.max(0, Math.floor(totalProfit)).toLocaleString();
+        document.getElementById('profitFill').style.width = Math.min((totalProfit/amount)*100, 100) + '%';
+
+        const riskRatio = (amount > 0) ? (roundedMonthly / amount) * 100 : 0;
+        const riskFill = document.getElementById('riskFill');
+        riskFill.style.width = Math.min(riskRatio * 5, 100) + '%';
+        if (riskRatio < 12) { riskFill.style.background = '#22c55e'; document.getElementById('riskText').innerText = 'آمن'; }
+        else { riskFill.style.background = '#ef4444'; document.getElementById('riskText').innerText = 'مرتفع'; }
     }
 
-    function showComparison(amount, interest, months, currentProfit) {
-        const box = document.getElementById('comparisonBox');
-        if (amount < 1000 || months < 3) { box.classList.remove('active'); return; }
-
-        box.classList.add('active');
-        // اقتراح: زيادة الفائدة 2% وتقليل المدة شهرين
-        const sugInterest = interest + 2;
-        const sugMonths = Math.max(months - 2, 3);
-        const sugAdmin = amount * 0.05;
-        const sugRawMonthly = (amount + (amount * (sugInterest/100) * (sugMonths/12))) / sugMonths;
-        const sugRounded = Math.ceil(sugRawMonthly / 5) * 5;
-        const sugProfit = sugAdmin + (sugRounded * sugMonths - amount);
-
-        document.getElementById('suggestionText').innerText = `لو خليت الفايدة ${sugInterest}% على ${sugMonths} شهر بدل ${months}:`;
-        document.getElementById('suggestedInstallment').innerText = sugRounded.toLocaleString();
-        document.getElementById('extraProfit').innerText = "+" + Math.floor(sugProfit - currentProfit).toLocaleString();
+    function toggleTheme() {
+        const curr = document.documentElement.getAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', curr === 'light' ? 'dark' : 'light');
     }
 
     function resetAll() {
-        document.querySelectorAll('input').forEach(i => i.value = i.id === 'adminRate' ? 5 : '');
+        document.getElementById('amount').value = '';
+        document.getElementById('dynamicInput').value = '';
+        document.getElementById('months').value = '';
         calculate();
-        document.getElementById('comparisonBox').classList.remove('active');
     }
 
     async function downloadImage() {
-        const card = document.getElementById('calculatorCard');
-        const canvas = await html2canvas(card, { backgroundColor: '#020617', scale: 2 });
+        const canvas = await html2canvas(document.getElementById('calculatorCard'), { backgroundColor: '#020617' });
         const link = document.createElement('a');
-        link.download = `FC-Pro-${Date.now()}.png`;
+        link.download = 'FC-Result.png';
         link.href = canvas.toDataURL();
         link.click();
     }
