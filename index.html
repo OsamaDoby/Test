@@ -1,143 +1,272 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" x-data="mailApp()" :class="{ 'dark': darkMode }">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoBy DoBy | بريد مؤقت ذكي</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>FC ESNA 2 - Finance Pro System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: background-color 0.5s; }
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+        :root {
+            --bg-color: #020617;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --text-color: #f8fafc;
+            --input-bg: rgba(30, 41, 59, 0.7);
+            --primary-neon: #00f2ff;
+            --secondary-neon: #7000ff;
+            --profit-color: #22c55e;
+            --risk-color: #ef4444;
+            --border-color: rgba(0, 242, 255, 0.2);
+            --glow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #1e293b;
+            --input-bg: #f1f5f9;
+            --primary-neon: #0ea5e9;
+            --secondary-neon: #6366f1;
+            --border-color: #e2e8f0;
+            --glow: 0 0 10px rgba(14, 165, 233, 0.1);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        body {
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--glow);
+            margin-bottom: 20px;
+        }
+
+        /* اللوجو المتوهج */
+        .logo-area { text-align: center; margin-bottom: 1.5rem; }
+        .logo-main {
+            font-size: 2rem; font-weight: 800; color: var(--primary-neon);
+            animation: neon-pulse 2s infinite alternate; letter-spacing: 2px;
+        }
+        @keyframes neon-pulse {
+            from { text-shadow: 0 0 10px var(--primary-neon); transform: scale(1); }
+            to { text-shadow: 0 0 25px var(--primary-neon), 0 0 40px var(--secondary-neon); transform: scale(1.03); }
+        }
+
+        .header-actions { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+        .btn-tool { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+
+        /* مدخلات البيانات */
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 5px; font-size: 0.8rem; opacity: 0.8; font-weight: 600; }
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none; }
+        input:focus { border-color: var(--primary-neon); box-shadow: var(--glow); }
+
+        /* لوحة العدادات الذكية */
+        .smart-panel {
+            margin-top: 1rem; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px solid var(--border-color);
+        }
+        .gauge-container { margin-bottom: 15px; }
+        .gauge-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; }
+        .gauge-bar { height: 8px; background: #334155; border-radius: 4px; overflow: hidden; }
+        .gauge-fill { height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
+
+        /* النتائج */
+        .results { margin: 1.5rem 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--border-color); }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+        .result-item span:last-child { color: var(--primary-neon); font-weight: bold; }
+
+        /* لوحة المقارنة */
+        .comparison-box {
+            width: 100%; max-width: 420px; padding: 1.5rem; background: var(--card-bg); border-radius: 20px; 
+            border: 1px solid var(--secondary-neon); margin-bottom: 20px; display: none;
+        }
+        .comparison-box.active { display: block; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .save-btn { width: 100%; background: transparent; color: var(--primary-neon); border: 1px solid var(--primary-neon); padding: 14px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .save-btn:hover { background: var(--primary-neon); color: #000; }
+
+        /* أيقونات التواصل */
+        .footer-social { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
+        .social-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .icon-fb { background: #1877F2; } .icon-wa { background: #25d366; } .icon-ig { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
+<body>
 
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <header class="flex justify-between items-center mb-12">
-            <h1 class="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent">DoBy DoBy</h1>
-            <div class="flex gap-2">
-                <button @click="toggleLang()" class="p-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm" x-text="lang === 'ar' ? 'EN' : 'AR'"></button>
-                <button @click="darkMode = !darkMode" class="p-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm">
-                    <span x-show="!darkMode">🌙</span><span x-show="darkMode">☀️</span>
-                </button>
-            </div>
-        </header>
-
-        <main class="max-w-xl mx-auto text-center">
-            <div class="glass border border-white/20 dark:border-slate-700 p-8 rounded-[2.5rem] shadow-2xl transition-all hover:scale-[1.01]">
-                <p class="text-sm opacity-60 mb-3" x-text="t[lang].sub"></p>
-                
-                <div class="relative group mb-6">
-                    <input type="text" readonly :value="email" class="w-full bg-slate-100 dark:bg-slate-800/50 p-5 rounded-2xl text-center text-xl font-mono border-2 border-transparent focus:border-blue-500 outline-none transition-all">
-                    <button @click="copyEmail()" class="absolute inset-y-2 left-2 bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-xl transition-all active:scale-90 flex items-center gap-2">
-                        <span x-text="t[lang].copy"></span>
-                    </button>
-                </div>
-
-                <div class="flex justify-between items-center px-2">
-                    <div class="flex items-center gap-2 text-sm font-bold text-red-500">
-                        <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
-                        <span x-text="formatTime(timer)"></span>
-                    </div>
-                    <button @click="init()" class="text-slate-500 hover:text-blue-500 flex items-center gap-1 transition-colors">
-                        <span x-text="t[lang].refresh"></span> 🔄
-                    </button>
-                </div>
-            </div>
-
-            <section class="mt-12 text-right" :dir="lang === 'ar' ? 'rtl' : 'ltr'">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">📬 <span x-text="t[lang].inbox"></span></h2>
-                
-                <template x-if="messages.length === 0">
-                    <div class="p-16 border-4 border-dashed border-slate-200 dark:border-slate-800 rounded-[2rem] opacity-40">
-                        <p x-text="t[lang].empty"></p>
-                    </div>
-                </template>
-
-                <div class="space-y-4">
-                    <template x-for="msg in messages" :key="msg.id">
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border-l-4 border-blue-500 hover:shadow-md transition-all cursor-pointer">
-                            <div class="flex justify-between mb-2">
-                                <span class="font-bold text-blue-600" x-text="msg.from.address"></span>
-                                <span class="text-xs opacity-50" x-text="new Date(msg.createdAt).toLocaleTimeString()"></span>
-                            </div>
-                            <p class="font-medium" x-text="msg.subject"></p>
-                        </div>
-                    </template>
-                </div>
-            </section>
-        </main>
+<div class="container" id="calculatorCard">
+    <div class="header-actions">
+        <div>
+            <button class="btn-tool" onclick="toggleLang()" id="langBtn">EN</button>
+            <button class="btn-tool" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        </div>
+        <button class="btn-tool" style="color:#ef4444" onclick="resetAll()">مسح</button>
     </div>
 
-    <script>
-        function mailApp() {
-            return {
-                email: 'جاري التوليد...',
-                token: '',
-                messages: [],
-                timer: 600,
-                darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
-                lang: 'ar',
-                t: {
-                    ar: { sub: "بريدك الإلكتروني المؤقت جاهز", copy: "نسخ", refresh: "تحديث", inbox: "صندوق الوارد", empty: "لا توجد رسائل بعد.. نحن نراقب الوضع!" },
-                    en: { sub: "Your temporary email is ready", copy: "Copy", refresh: "Refresh", inbox: "Inbox", empty: "No messages yet.. we are watching!" }
-                },
-                async init() {
-                    this.startTimer();
-                    try {
-                        // 1. Get Domain
-                        const domains = await fetch('https://api.mail.tm/domains').then(res => res.json());
-                        const domain = domains['hydra:member'][0].domain;
-                        const address = `${Math.random().toString(36).substring(7)}@${domain}`;
-                        const password = 'password123';
+    <div class="logo-area">
+        <div class="logo-main">FC ESNA 2</div>
+        <div class="logo-sub">Finance Calculator</div>
+    </div>
 
-                        // 2. Create Account
-                        await fetch('https://api.mail.tm/accounts', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ address, password })
-                        });
+    <div class="input-group">
+        <label>المبلغ الأساسي</label>
+        <input type="number" id="amount" placeholder="0.00" oninput="calculate()">
+    </div>
 
-                        // 3. Get Token
-                        const auth = await fetch('https://api.mail.tm/token', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ address, password })
-                        }).then(res => res.json());
+    <div class="input-row">
+        <div class="input-group">
+            <label>المصاريف (%)</label>
+            <input type="number" id="adminRate" value="5" oninput="calculate()">
+        </div>
+        <div class="input-group">
+            <label>الفايدة (%)</label>
+            <input type="number" id="interest" placeholder="0" oninput="calculate()">
+        </div>
+    </div>
 
-                        this.email = address;
-                        this.token = auth.token;
-                        this.checkMessages();
-                        setInterval(() => this.checkMessages(), 5000); // تحديث كل 5 ثواني
-                    } catch (e) { this.email = "خطأ في الاتصال"; }
-                },
-                async checkMessages() {
-                    if (!this.token) return;
-                    const res = await fetch('https://api.mail.tm/messages', {
-                        headers: { 'Authorization': `Bearer ${this.token}` }
-                    }).then(res => res.json());
-                    this.messages = res['hydra:member'];
-                },
-                copyEmail() {
-                    navigator.clipboard.writeText(this.email);
-                    alert(this.lang === 'ar' ? 'تم النسخ!' : 'Copied!');
-                },
-                toggleLang() {
-                    this.lang = this.lang === 'ar' ? 'en' : 'ar';
-                    document.documentElement.dir = this.lang === 'ar' ? 'rtl' : 'ltr';
-                },
-                startTimer() {
-                    this.timer = 600;
-                    setInterval(() => { if(this.timer > 0) this.timer-- }, 1000);
-                },
-                formatTime(s) {
-                    return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
-                }
-            }
-        }
-    </script>
+    <div class="input-group">
+        <label>المدة (شهور)</label>
+        <input type="number" id="months" placeholder="0" oninput="calculate()">
+    </div>
+
+    <div class="smart-panel">
+        <div class="gauge-container">
+            <div class="gauge-label">
+                <span>مؤشر الربحية (صافي فوائد + عمولة)</span>
+                <span id="profitVal">0</span>
+            </div>
+            <div class="gauge-bar"><div id="profitFill" class="gauge-fill" style="background: var(--profit-color)"></div></div>
+        </div>
+        <div class="gauge-container">
+            <div class="gauge-label">
+                <span>مستوى مخاطرة القسط</span>
+                <span id="riskLevel">آمن</span>
+            </div>
+            <div class="gauge-bar"><div id="riskFill" class="gauge-fill"></div></div>
+        </div>
+    </div>
+
+    <div class="results">
+        <div class="result-item"><span>القسط الشهري:</span> <span id="monthlyPayment">0</span></div>
+        <div class="result-item" style="border-top: 1px solid var(--border-color); padding-top:10px;">
+            <span>صافي المستلم النهائي:</span> <span id="netAmount" style="font-size: 1.1rem; color: var(--secondary-neon);">0</span>
+        </div>
+    </div>
+
+    <button class="save-btn" onclick="downloadImage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <span>تصدير بيانات العملية</span>
+    </button>
+</div>
+
+<div id="comparisonBox" class="comparison-box">
+    <h3 style="margin-top:0; color:var(--primary-neon); font-size: 1rem;">💡 سيناريو مقترح (أفضل للمكتب)</h3>
+    <p id="suggestionText" style="font-size: 0.85rem; opacity: 0.9;"></p>
+    <div class="result-item"><span>القسط في الاقتراح:</span> <span id="suggestedInstallment">0</span></div>
+    <div class="result-item"><span>زيادة الربح المتوقعة:</span> <span id="extraProfit" style="color:var(--profit-color)">0</span></div>
+</div>
+
+<div class="footer-social">
+    <a href="https://wa.me/message/FJEGUNCJ4JX7P1" class="social-icon icon-wa" target="_blank">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.06 3.965L0 16l4.232-1.11a7.839 7.839 0 0 0 3.758.955h.001c4.438 0 8.044-3.606 8.048-8.046a7.848 7.848 0 0 0-2.438-5.473l-.001-.001ZM10.582 13.074c-1.023.36-2.148.165-3.18-.35l-.247-.122-2.51.659.67-2.44-.134-.213a6.71 6.71 0 0 1-1.03-3.51c0-3.712 3.023-6.735 6.737-6.735 1.8 0 3.49.7 4.76 1.97a6.69 6.69 0 0 1 1.97 4.76c0 3.712-3.024 6.736-6.74 6.736l-.003-.001Z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/osamamasrawy?igsh=MWJqcnhhMWd6MjNxNQ%3D%3D" class="social-icon icon-ig" target="_blank">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.282.11-.705.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
+    </a>
+</div>
+
+<script>
+    function toggleTheme() {
+        const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    function calculate() {
+        const amount = parseFloat(document.getElementById('amount').value) || 0;
+        const adminRate = parseFloat(document.getElementById('adminRate').value) || 0;
+        const interestRate = parseFloat(document.getElementById('interest').value) || 0;
+        const months = parseInt(document.getElementById('months').value) || 0;
+
+        if (amount <= 0) return;
+
+        // الحسبة الأساسية
+        const adminFee = amount * (adminRate / 100);
+        const totalInterest = amount * (interestRate / 100) * (months / 12);
+        const rawMonthly = (amount + totalInterest) / (months || 1);
+        const roundedMonthly = Math.ceil(rawMonthly / 5) * 5;
+        const totalProfit = adminFee + (roundedMonthly * months - amount);
+
+        document.getElementById('monthlyPayment').innerText = roundedMonthly.toLocaleString();
+        document.getElementById('netAmount').innerText = (amount - adminFee - roundedMonthly).toLocaleString();
+
+        // تحديث عداد الربحية (نسبة الربح من المبلغ الأساسي)
+        const profitPercent = Math.min((totalProfit / amount) * 100, 100);
+        document.getElementById('profitFill').style.width = profitPercent + '%';
+        document.getElementById('profitVal').innerText = Math.floor(totalProfit).toLocaleString();
+
+        // مؤشر المخاطر (لو القسط > 25% من المبلغ يبقى خطر)
+        const riskPercent = Math.min((roundedMonthly / amount) * 400, 100);
+        const riskFill = document.getElementById('riskFill');
+        const riskText = document.getElementById('riskLevel');
+        riskFill.style.width = riskPercent + '%';
+        
+        if (riskPercent < 30) { riskFill.style.background = '#22c55e'; riskText.innerText = 'آمن جداً'; }
+        else if (riskPercent < 60) { riskFill.style.background = '#f59e0b'; riskText.innerText = 'متوسط'; }
+        else { riskFill.style.background = '#ef4444'; riskText.innerText = 'عالي المخاطر'; }
+
+        // توليد سيناريو مقارنة تلقائي
+        showComparison(amount, interestRate, months, totalProfit);
+    }
+
+    function showComparison(amount, interest, months, currentProfit) {
+        const box = document.getElementById('comparisonBox');
+        if (amount < 1000 || months < 3) { box.classList.remove('active'); return; }
+
+        box.classList.add('active');
+        // اقتراح: زيادة الفائدة 2% وتقليل المدة شهرين
+        const sugInterest = interest + 2;
+        const sugMonths = Math.max(months - 2, 3);
+        const sugAdmin = amount * 0.05;
+        const sugRawMonthly = (amount + (amount * (sugInterest/100) * (sugMonths/12))) / sugMonths;
+        const sugRounded = Math.ceil(sugRawMonthly / 5) * 5;
+        const sugProfit = sugAdmin + (sugRounded * sugMonths - amount);
+
+        document.getElementById('suggestionText').innerText = `لو خليت الفايدة ${sugInterest}% على ${sugMonths} شهر بدل ${months}:`;
+        document.getElementById('suggestedInstallment').innerText = sugRounded.toLocaleString();
+        document.getElementById('extraProfit').innerText = "+" + Math.floor(sugProfit - currentProfit).toLocaleString();
+    }
+
+    function resetAll() {
+        document.querySelectorAll('input').forEach(i => i.value = i.id === 'adminRate' ? 5 : '');
+        calculate();
+        document.getElementById('comparisonBox').classList.remove('active');
+    }
+
+    async function downloadImage() {
+        const card = document.getElementById('calculatorCard');
+        const canvas = await html2canvas(card, { backgroundColor: '#020617', scale: 2 });
+        const link = document.createElement('a');
+        link.download = `FC-Pro-${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+</script>
 </body>
 </html>
